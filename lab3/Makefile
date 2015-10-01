@@ -1,5 +1,4 @@
 obj-m := incrementer.o
-#obj-m := test.o
 
 KVERSION := $(shell uname -r)
 KDIR := /lib/modules/$(KVERSION)/build
