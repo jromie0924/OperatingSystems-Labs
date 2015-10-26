@@ -1,5 +1,4 @@
-#obj-m := acpi_call.o
-obj-m := ThreadCounter.o
+obj-m := battcheck.o
 
 KVERSION := $(shell uname -r)
 KDIR := /lib/modules/$(KVERSION)/build
