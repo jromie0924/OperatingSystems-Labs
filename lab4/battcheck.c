@@ -10,10 +10,11 @@
 MODULE_LICENSE("GPL");
 // use BIF and BST
 
-#define delay 5000
+#define delay 1000
 
 struct task_struct *thread;
 int tid = 0;
+int capacity, powerUnit;
 
 int doit(void* id) {
 	int charge_discharge, charge, y;
@@ -35,25 +36,44 @@ int doit(void* id) {
 			printk(KERN_INFO "Info from thread ID %d: discharging=%d charge=%d remaining=%d\n", *((int*)id), charge_discharge, charge, y);
 			kfree(result);
 		}
+		else {
+			printk(KERN_EMERG "ERROR\n");
+		}
 		msleep(delay);
 	}
-	// queue_delayed_work(queue, &dwork, HZ);
 	return 0;
 }
 
 int init_module(void) {
-//	queue = create_workqueue("queue");
-//	INIT_DELAYED_WORK((struct delayed_work*)&dwork, doit);
-//	queue_delayed_work(queue, &dwork, HZ);
+
+	acpi_status info;
+	acpi_handle handle;
+	union acpi_object* result;
+	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+
+	info = acpi_get_handle(NULL, (acpi_string)"\\_SB_.PCI0.BAT0", &handle);
+	info = acpi_evaluate_object(handle, "_BIF", NULL, &buffer);
+	result = buffer.pointer;
+	if(result) {
+		powerUnit = result->package.elements[0].integer.value;
+		capacity = result->package.elements[1].integer.value;
+
+		printk(KERN_INFO "power unit=%d capacity=%d\n", powerUnit, capacity);
+
+	} else {
+		printk(KERN_EMERG "ERROR GETTING BATTERY INFORMATION\n");
+	}
 
 	thread = kthread_create(doit, (void*)&tid, "tid");
 //	t1 = kthread_create(incrementer, (void*)&id1, "inc1");
 
 	if(thread) {
-		wake_up_process(thread);
+	//	wake_up_process(thread);
 	} else {
 		printk(KERN_EMERG "ERROR\n");
 	}
+
+	msleep(500);
 
 	//doit();
 	return 0;
