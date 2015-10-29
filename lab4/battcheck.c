@@ -17,7 +17,7 @@ int tid = 0;
 int capacity, powerUnit;
 
 int doit(void* id) {
-	int charge_discharge, charge, y;
+	int charge_discharge, charge;
 	while(1) {
 		acpi_status status;
 		acpi_handle handle;
@@ -30,10 +30,17 @@ int doit(void* id) {
 		if(result) {
 			charge_discharge = result->package.elements[0].integer.value;
 			charge = result->package.elements[2].integer.value;
+
+			if(charge_discharge == 2) {
+				printk(KERN_INFO "Battery charging; Percent Remaning=%d", charge);
+			} else {
+				printk(KERN_INFO "Battery discharging; Percent Remaning=%d", charge);
+			}
 		//	kernel_fpu_begin();
-			y = (int)(charge/1.0);
+		//	y = (int)(charge/1.0);
 		//	kernel_fpu_end();
-			printk(KERN_INFO "Info from thread ID %d: discharging=%d charge=%d remaining=%d\n", *((int*)id), charge_discharge, charge, y);
+			//printk(KERN_INFO "discharging=%d charge=%d remaining=%d\n", charge_discharge, charge, y);
+			
 			kfree(result);
 		}
 		else {
@@ -68,7 +75,7 @@ int init_module(void) {
 //	t1 = kthread_create(incrementer, (void*)&id1, "inc1");
 
 	if(thread) {
-	//	wake_up_process(thread);
+		wake_up_process(thread);
 	} else {
 		printk(KERN_EMERG "ERROR\n");
 	}
@@ -80,5 +87,7 @@ int init_module(void) {
 }
 
 void cleanup_module() {
+	kthread_stop(thread);
+
 	printk(KERN_INFO "MODULE REMOVED\n");
 }
