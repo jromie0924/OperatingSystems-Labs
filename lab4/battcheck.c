@@ -6,6 +6,7 @@
 #include <asm/uaccess.h>
 #include <linux/acpi.h>
 #include <linux/delay.h>
+#include <asm/i387.h>
 
 MODULE_LICENSE("GPL");
 // use BIF and BST
@@ -31,7 +32,7 @@ int doit(void* id) {
 		if(result) {
 			charge_discharge = result->package.elements[0].integer.value;
 			charge = result->package.elements[2].integer.value;
-
+			
 			if(charge_discharge == 2) {
 				printk(KERN_INFO "Battery charging; Percent Remaning=%d\n", charge);
 			} else {
