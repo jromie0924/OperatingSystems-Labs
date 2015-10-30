@@ -15,6 +15,7 @@ MODULE_LICENSE("GPL");
 struct task_struct *thread;
 int tid = 0;
 int capacity, powerUnit;
+bool flag = false;
 
 int doit(void* id) {
 	int charge_discharge, charge;
@@ -32,9 +33,9 @@ int doit(void* id) {
 			charge = result->package.elements[2].integer.value;
 
 			if(charge_discharge == 2) {
-				printk(KERN_INFO "Battery charging; Percent Remaning=%d", charge);
+				printk(KERN_INFO "Battery charging; Percent Remaning=%d\n", charge);
 			} else {
-				printk(KERN_INFO "Battery discharging; Percent Remaning=%d", charge);
+				printk(KERN_INFO "Battery discharging; Percent Remaning=%d\n", charge);
 			}
 		//	kernel_fpu_begin();
 		//	y = (int)(charge/1.0);
@@ -45,6 +46,9 @@ int doit(void* id) {
 		}
 		else {
 			printk(KERN_EMERG "ERROR\n");
+		}
+		if(kthread_should_stop()) {
+			flag = true;
 		}
 		msleep(delay);
 	}
@@ -87,7 +91,9 @@ int init_module(void) {
 }
 
 void cleanup_module() {
-	kthread_stop(thread);
+	if(flag) {
+		kthread_stop(thread);
+	}
 
 	printk(KERN_INFO "MODULE REMOVED\n");
 }
