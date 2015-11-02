@@ -120,7 +120,8 @@ int init_module(void) {
 
 	msleep(500);
 
-	//doit();
+	kfree(result);
+	
 	return 0;
 }
 
