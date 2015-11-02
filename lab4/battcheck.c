@@ -39,13 +39,15 @@ int doit(void* id) {
 				
 				if(charge_discharge == 2) {
 					if(signal) signal = false;
-					down_interruptible(&lock);
-					printk(KERN_INFO "Battery charging; Charge=%d; info#=%d\n", charge, charge_discharge);
+					if(!down_interruptible(&lock)) {
+						printk(KERN_INFO "Battery charging; Charge=%d; info#=%d\n", charge, charge_discharge);
+					}
 				} else {
 					if(charge <= 5000 && charge >= 3500) {
 						if(signal) signal = false;
-						down_interruptible(&lock);
-						printk(KERN_INFO "Battery discharging; RUNNING LOW; Remaning=%d; info#=%d\n", charge, charge_discharge);
+						if(!down_interruptible(&lock)) {
+							printk(KERN_INFO "Battery discharging; RUNNING LOW; Remaning=%d; info#=%d\n", charge, charge_discharge);
+						}
 					}
 					else if(charge <= 3500) {
 						up(&lock);
