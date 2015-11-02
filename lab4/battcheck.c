@@ -10,6 +10,7 @@
 
 MODULE_LICENSE("GPL");
 // use BIF and BST
+// BST info on page 577 of ACPI spec sheet
 
 #define delay 1000
 
@@ -34,9 +35,9 @@ int doit(void* id) {
 			charge = result->package.elements[2].integer.value;
 			
 			if(charge_discharge == 2) {
-				printk(KERN_INFO "Battery charging; Percent Remaning=%d\n", charge);
+				printk(KERN_INFO "Battery charging; Remaning=%d; info#=%d\n", charge, charge_discharge);
 			} else {
-				printk(KERN_INFO "Battery discharging; Percent Remaning=%d\n", charge);
+				printk(KERN_INFO "Battery discharging; Remaning=%d; info#=%d\n", charge, charge_discharge);
 			}
 		//	kernel_fpu_begin();
 		//	y = (int)(charge/1.0);
@@ -76,14 +77,14 @@ int init_module(void) {
 		printk(KERN_EMERG "ERROR GETTING BATTERY INFORMATION\n");
 	}
 
-	thread = kthread_create(doit, (void*)&tid, "tid");
+	thread = kthread_run(doit, (void*)&tid, "tid");
 //	t1 = kthread_create(incrementer, (void*)&id1, "inc1");
 
-	if(thread) {
+	/*if(thread) {
 		wake_up_process(thread);
 	} else {
 		printk(KERN_EMERG "ERROR\n");
-	}
+	}*/
 
 	msleep(500);
 
@@ -92,9 +93,11 @@ int init_module(void) {
 }
 
 void cleanup_module() {
-	if(flag) {
-		kthread_stop(thread);
+	if(thread) {
+		if(flag) {
+			kthread_stop(thread);
+		}
 	}
-
+	kfree(thread);
 	printk(KERN_INFO "MODULE REMOVED\n");
 }
