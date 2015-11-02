@@ -50,21 +50,21 @@ int doit(void* id) {
 				if(charge_discharge == 2) {
 					if(signal) signal = false;
 					if(!down_interruptible(&lock)) {
-						printk(KERN_INFO "Battery charging; Charge=%d; info#=%d\n", charge, charge_discharge);
+						printk(KERN_INFO "Battery charging; Charge=%d\n", charge);
 					}
 				} else {
 					if(charge <= 5000 && charge >= 3500) {
 						if(signal) signal = false;
 						if(!down_interruptible(&lock)) {
-							printk(KERN_INFO "Battery discharging; RUNNING LOW; Remaning=%d; info#=%d\n", charge, charge_discharge);
+							printk(KERN_INFO "Battery discharging; RUNNING LOW; Remaning=%d\n", charge);
 						}
 					}
 					else if(charge <= 3500) {
 						up(&lock);
 						signal = true;
-						printk(KERN_INFO "Battery discharging; VEREY LOW; Remaning=%d; info#=%d\n", charge, charge_discharge);
+						printk(KERN_INFO "Battery discharging; VERY LOW; Remaning=%d\n", charge);
 					} else {
-						printk(KERN_INFO "Battery discharging; Remaning=%d; info#=%d\n", charge, charge_discharge);
+						printk(KERN_INFO "Battery discharging; Remaning=%d\n", charge);
 					}
 				}
 				kfree(result);
