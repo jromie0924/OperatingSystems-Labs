@@ -1,3 +1,7 @@
+// Jackson Romie
+// Operating Systems Fall 2015
+// Lab 4
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/proc_fs.h>
@@ -11,6 +15,12 @@
 MODULE_LICENSE("GPL");
 // use BIF and BST
 // BST info on page 577 of ACPI spec sheet
+
+/*
+
+Battery defined to be low when charge value reaches 5000, and critical when charge reaches 3500.
+
+*/
 
 #define delay 1000
 #define delayCritical 30000
