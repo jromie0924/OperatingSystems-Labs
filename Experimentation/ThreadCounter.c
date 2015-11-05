@@ -17,7 +17,7 @@ There are two threads - ts0 and ts1 and each is assigned to its corrosponding el
 #include <asm/uaccess.h>
 #include <linux/delay.h>
 
-#define sum 9000000
+#define sum 9000000 // 9 million
 
 struct task_struct *ts0, *ts1;
 struct mutex lock;
