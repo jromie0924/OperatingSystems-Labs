@@ -77,6 +77,7 @@ int doit(void* id) {
 			}
 			msleep(delay);
 		}
+		kfree(id);
 	}
 	return 0;
 }
@@ -95,6 +96,7 @@ int criticalMsg(void* data) {
 		}
 		msleep(delayCritical);
 	}
+	kfree(data);
 	return 0;
 }
 
